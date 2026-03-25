@@ -6,7 +6,7 @@ import json
 import os
 import datetime
 
-# ─── PYINSTALLER KAYNAK YOLU ──────────────────────────────────────────────────
+# PYINSTALLER KAYNAK YOLU 
 def resource_path(relative_path):
     """PyInstaller .app içinde veya normal çalışmada kaynak dosya yolunu döndür."""
     try:
@@ -15,14 +15,14 @@ def resource_path(relative_path):
         base_path = os.path.dirname(os.path.abspath(__file__))
     return os.path.join(base_path, relative_path)
 
-# ─── BAŞLANGIÇ AYARLARI ───────────────────────────────────────────────────────
+#  BAŞLANGIÇ AYARLARI 
 pygame.init()
 GENISLIK, YUKSEKLIK =800, 400
 ekran = pygame.display.set_mode((GENISLIK, YUKSEKLIK))
 pygame.display.set_caption("HEY HEY HEY YARIŞIYOR")
 saat = pygame.time.Clock()
 
-# ─── RENK PALETİ ─────────────────────────────────────────────────────────────
+# RENK PALETİ 
 KOYU_LACIVERT = (10,   8,  30)
 KOYU_MOR      = (20,  10,  50)
 MOR           = (90,  50, 160)
@@ -37,8 +37,8 @@ KIRMIZI       = (220,  50,  80)
 ZEMIN_KOYU    = ( 30,  15,  60)
 ZEMIN_IZGI    = ( 60,  30, 100)
 
-# ─── SKOR TABLOSU (JSON) ─────────────────────────────────────────────────────
-# .app bundle içi read-only olduğu için skor dosyasını kullanıcı klasörüne yaz
+#  SKOR TABLOSU 
+
 _UYGULAMA_DESTEK = os.path.join(os.path.expanduser("~"), "Library", "Application Support", "ArkadaşlarMacera")
 os.makedirs(_UYGULAMA_DESTEK, exist_ok=True)
 SKOR_DOSYASI = os.path.join(_UYGULAMA_DESTEK, "skor_tablosu.json")
@@ -62,7 +62,7 @@ def skor_kaydet(isim, skor_val):
         json.dump(kayitlar, f, ensure_ascii=False, indent=2)
     return kayitlar
 
-# ─── YILDIZ SİSTEMİ ──────────────────────────────────────────────────────────
+#  YILDIZ SİSTEMİ 
 def yildiz_olustur(adet=80):
     yildizlar = []
     for _ in range(adet):
@@ -84,7 +84,7 @@ def yildizlari_ciz(yildizlar, frame):
         renk = (p, p, min(255, p + 40))
         pygame.draw.circle(ekran, renk, (int(y[0]), int(y[1])), y[2])
 
-# ─── ZEMİN / GRID ────────────────────────────────────────────────────────────
+#  ZEMİN 
 def zemin_ciz(kaydirma=0):
     pygame.draw.rect(ekran, ZEMIN_KOYU, (0, 365, GENISLIK, 35))
     aralik = 40
@@ -94,7 +94,7 @@ def zemin_ciz(kaydirma=0):
     pygame.draw.line(ekran, PARLAK_MOR, (0, 365), (GENISLIK, 365), 2)
     pygame.draw.line(ekran, PEMBE,      (0, 367), (GENISLIK, 367), 1)
 
-# ─── METİN YARDIMCILARI ──────────────────────────────────────────────────────
+#  METİN YARDIMCILARI 
 def metin_golgeli(font, yazi, renk, x, y, golge=(0, 0, 0), golge_offset=2):
     ekran.blit(font.render(yazi, True, golge), (x + golge_offset, y + golge_offset))
     ekran.blit(font.render(yazi, True, renk),  (x, y))
@@ -104,7 +104,7 @@ def metin_ortali(font, yazi, renk, y, golge=(0, 0, 0)):
     x     = (GENISLIK - yuzey.get_width()) // 2
     metin_golgeli(font, yazi, renk, x, y, golge)
 
-# ─── ENGEL SÖZLÜĞÜ ───────────────────────────────────────────────────────────
+#  ENGEL SÖZLÜĞÜ 
 engel_sozlugu = {
     "kahve.png"      : "Uykusuzluktan bayıldı!",
     "sarap.png"      : "Eğlenceyi dozunda bırakamadı!",
@@ -114,7 +114,7 @@ engel_sozlugu = {
 }
 UCUCU_ENGELLER = {"tk_logo.png", "kalp.png"}
 
-# ─── BULUT SINIFI ─────────────────────────────────────────────────────────────
+#  BULUT SINIFI 
 class Bulut:
     def __init__(self):
         self.x   = random.randint(800, 1200)
@@ -132,7 +132,7 @@ class Bulut:
         for ox, oy, r in [(-20, 0, 18), (0, 0, 22), (20, 0, 18), (10, -10, 15), (-10, -10, 15)]:
             pygame.draw.circle(ekran, renk, (int(self.x + ox), int(self.y + oy)), r)
 
-# ─── ARKADAŞ SINIFI ───────────────────────────────────────────────────────────
+# ARKADAŞ SINIFI 
 ZIPLA_GUCU = 15
 
 class Arkadas:
@@ -201,7 +201,7 @@ class Arkadas:
             f = pygame.font.SysFont("Arial", 16, bold=True)
             metin_golgeli(f, self.isim, CYAN, self.x, self.y - 22, (10, 5, 30), 2)
 
-# ─── ENGEL SINIFI ─────────────────────────────────────────────────────────────
+#  ENGEL SINIFI 
 class Engel:
     def __init__(self, resim_adi, ucuyor=False):
         self.resim_adi = resim_adi
@@ -230,7 +230,7 @@ class Engel:
             ok = f.render("↓ EĞİL", True, CYAN)
             ekran.blit(ok, (self.rect.x + 25 - ok.get_width() // 2, self.rect.y - 18))
 
-# ─── AÇILIŞ / LOADING EKRANI ─────────────────────────────────────────────────
+# AÇILIŞ EKRANI 
 def acilis_ekrani():
     font_buyuk = pygame.font.SysFont("Arial", 52, bold=True)
     font_orta  = pygame.font.SysFont("Arial", 22, bold=True)
@@ -288,7 +288,7 @@ def acilis_ekrani():
         saat.tick(60)
         frame += 1
 
-# ─── KARAKTER SEÇİM EKRANI ────────────────────────────────────────────────────
+# KARAKTER SEÇİM EKRANI 
 def karakter_sec():
     font_baslik = pygame.font.SysFont("Arial", 38, bold=True)
     font_isim   = pygame.font.SysFont("Arial", 17, bold=True)
@@ -370,7 +370,7 @@ def karakter_sec():
                 elif event.key == pygame.K_RETURN:
                     return kadro[secim_index]
 
-# ─── SKOR TABLOSU EKRANI ──────────────────────────────────────────────────────
+# SKOR TABLOSU EKRANI 
 def skor_tablosu_ekrani(yeni_skor=None, yeni_isim=None):
     """Top-10 skor tablosunu göster. ESC/ENTER ile çık."""
     font_baslik = pygame.font.SysFont("Arial", 32, bold=True)
@@ -436,7 +436,7 @@ def skor_tablosu_ekrani(yeni_skor=None, yeni_isim=None):
         saat.tick(60)
         frame += 1
 
-# ─── OYUNU SIFIRLA ────────────────────────────────────────────────────────────
+#  OYUNU SIFIRLA 
 HIZ_BASLANGIC = 3.5    # yavaş başla
 HIZ_MAKS      = 18.0   # maksimum hız
 
@@ -448,7 +448,7 @@ def oyunu_sifirla(secili_karakter):
     secili_karakter.resim    = secili_karakter.resim_normal
     return 0, secili_karakter, [], HIZ_BASLANGIC, True, "", 0
 
-# ─── ANA OYUN ─────────────────────────────────────────────────────────────────
+#  ANA OYUN 
 acilis_ekrani()
 secili_karakter = karakter_sec()
 
@@ -494,8 +494,8 @@ while True:
         frame_sayaci += 1
         zemin_kaydi  += engel_hizi
 
-        # ── KADEMELİ HIZ ARTIŞI ───────────────────────────────────────────
-        # Her frame biraz hızlan; başta çok yavaş, sonra giderek hızlanır
+        #  KADEMELİ HIZ ARTIŞI 
+        
         hiz_artis    = 0.0008 + (engel_hizi - HIZ_BASLANGIC) * 0.00015
         engel_hizi   = min(HIZ_MAKS, engel_hizi + hiz_artis)
 
@@ -522,7 +522,7 @@ while True:
 
         zemin_ciz(int(zemin_kaydi))
 
-        # ── HUD ──────────────────────────────────────────────────────────
+        #  HUD 
         skor_val = skor // 10
         hud_surf = pygame.Surface((165, 65), pygame.SRCALPHA)
         hud_surf.fill((20, 10, 50, 160))
@@ -538,7 +538,7 @@ while True:
         pygame.draw.rect(ekran, hiz_renk,   (633, 48, min(bar_dolu, bar_max), 6), border_radius=3)
 
     else:
-        # ── OYUN SONU ─────────────────────────────────────────────────────
+        # OYUN SONU 
         mevcut_skor = skor // 10
 
         # Skoru bir kez kaydet
@@ -581,7 +581,7 @@ while True:
         # Skor
         metin_ortali(font_kucuk, f"Puan: {mevcut_skor:,}", CYAN, y_pos + 20)
 
-        # Mini top-3
+        # Mini top 3
         kayitlar = skor_yukle()
         if kayitlar:
             madalyalar = ["🥇", "🥈", "🥉"]
